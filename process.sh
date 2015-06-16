@@ -7,7 +7,7 @@ if [ ! -d "thesis" ]; then
 	
 	cd ./thesis
 	# Checkout current head and compile to make figures
-	git checkout HEAD
+	git checkout master
 	lualatex -shell-escape thesis.tex
 	bibtex thesis.aux
 	bibtex apubs.aux
@@ -24,10 +24,10 @@ git checkout v0.9
 find . -name "*.tex" -exec cp {} {}.bak \;
 
 # Checkout current head
-git checkout HEAD
+git checkout master
 
 # Run latexdiff on each .tex file and store result in .tex.diff
-find . -name "*.tex" -exec sh -c "latexdiff {} {}.bak > {}.diff" \; 
+find . -name "*.tex" -exec sh -c "latexdiff {}.bak {} > {}.diff" \; 
 
 # Cleanup all .bak files
 find . -name "*.tex.bak" | xargs rm 
@@ -37,7 +37,9 @@ find . -name "*.tex.diff" -print0 | sed 's/.tex.diff//g' | xargs -0 -I namePrefi
 
 # Compile change pdf
 lualatex -shell-escape thesis.tex
-bibtex thesis.tex
+bibtex thesis.aux
+bibtex apubs.aux
+lualatex -shell-escape thesis.tex
 lualatex -shell-escape thesis.tex
 
 # Discard any changes (except pdf, which hopefully is untracked)
